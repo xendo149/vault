@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="VAULT. is a fake-money card ripping game. Start with $100, open packs, and try to hit $1,000,000,000." />
+    <title>VAULT. — Card ripping, fake money</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="site.css" />
+  </head>
+  <body>
+    <header class="nav">
+      <a class="brand" href="#top">
+        <span>V</span>
+        <strong>VAULT.</strong>
+      </a>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links">Menu</button>
+      <nav id="nav-links">
+        <a href="#play">How to play</a>
+        <a href="#packs">Packs</a>
+        <a href="#rarities">Rarities</a>
+        <a href="#collection">Collection</a>
+        <a href="#faq">FAQ</a>
+        <a class="play" href="../index.html">Play</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="kicker">Fake money. Real rip.</p>
+          <h1>Open the wax. Chase the grail.</h1>
+          <p class="lede">
+            VAULT. is a card-ripping game that spends play money only. You start with $100, swipe through packs, tear them open, and try to reach $1,000,000,000.
+          </p>
+          <div class="hero-actions">
+            <a class="play big" href="../index.html">Play the game</a>
+            <a class="quiet" href="#packs">See the packs</a>
+          </div>
+          <ul class="facts">
+            <li><b>$100</b><span>Starting bank</span></li>
+            <li><b>$1B</b><span>Win goal</span></li>
+            <li><b>512</b><span>Cards in the set</span></li>
+          </ul>
+        </div>
+        <div class="hero-stage" aria-hidden="true">
+          <article class="wax">
+            <em>100K</em>
+            <strong>LIMITED</strong>
+          </article>
+          <article class="tcg">
+            <img src="../assets/aetherwing.png" alt="" />
+            <div>
+              <b>Aetherwing</b>
+              <span>Grail</span>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="play" class="panel">
+        <p class="kicker">How to play</p>
+        <h2>One pack at a time.</h2>
+        <ol class="steps">
+          <li>
+            <b>Swipe the shelf</b>
+            <span>Move between packs with a swipe or the arrows. Each one shows its price, range, and average.</span>
+          </li>
+          <li>
+            <b>Check the odds</b>
+            <span>View Odds lists every rarity and the virtual value it can pay inside that pack.</span>
+          </li>
+          <li>
+            <b>Rip it open</b>
+            <span>Drag across the wax. The card rises, flips, and the rarer it is, the louder the reveal.</span>
+          </li>
+          <li>
+            <b>Sell or keep</b>
+            <span>Selling adds the card’s value to your bank. Keeping it goes into the collection, which stays saved.</span>
+          </li>
+        </ol>
+        <p class="note">The bank returns to $100 every refresh. The binder does not. If you cannot afford a pack and have nothing left to sell, you bust. There is no way to add real money.</p>
+      </section>
+
+      <section id="packs" class="panel">
+        <p class="kicker">The shelf</p>
+        <h2>Thirteen packs, then the ones you have to earn.</h2>
+        <div class="pack-grid">
+          <article><b>Penny Wax</b><span>$1</span><small>$0.10 – $20</small></article>
+          <article><b>Warm-Up Rip</b><span>$2.50</span><small>$0.25 – $50</small></article>
+          <article><b>Street Heat</b><span>$5</span><small>$0.50 – $100</small></article>
+          <article><b>Prime Rip</b><span>$10</span><small>$1 – $200</small></article>
+          <article><b>Heat Check</b><span>$25</span><small>$2.50 – $500</small></article>
+          <article><b>Night Vault</b><span>$50</span><small>$5 – $1,000</small></article>
+          <article><b>High Roller</b><span>$100</span><small>$10 – $2,000</small></article>
+          <article><b>Breaker's Case</b><span>$250</span><small>$25 – $5,000</small></article>
+          <article><b>Gold Wax</b><span>$500</span><small>$50 – $10,000</small></article>
+          <article><b>Grail Hunt</b><span>$1,000</span><small>$100 – $20,000</small></article>
+          <article><b>Vault Break</b><span>$2,500</span><small>$250 – $50,000</small></article>
+          <article><b>God Pack</b><span>$5,000</span><small>$500 – $100,000</small></article>
+          <article class="featured"><b>$100,000 LIMITED</b><span>10 packs</span><small>$1,000 – $1,000,000 · exclusive cards</small></article>
+        </div>
+        <div class="secret">
+          <h3>Secret packs stay hidden</h3>
+          <p>Shadow Vault, Eclipse Tin, and Seraph Case do not appear until you hit a milestone: 50 unique cards, 100 packs opened, or a Grail pull.</p>
+        </div>
+      </section>
+
+      <section id="rarities" class="panel">
+        <p class="kicker">Rarities</p>
+        <h2>From white wax to Holy Grail.</h2>
+        <ul class="ladder">
+          <li style="--c:#f4f4f4">Common</li>
+          <li style="--c:#3dcf7a">Uncommon</li>
+          <li style="--c:#3d8bff">Rare</li>
+          <li style="--c:#b56bff">Epic</li>
+          <li style="--c:#f5c542">Legendary</li>
+          <li style="--c:#ff3344">Ultra Rare</li>
+          <li style="--c:#9fffea">Secret Rare</li>
+          <li style="--c:#ffe08a">Grail</li>
+          <li class="holy" style="--c:#fff">Holy Grail</li>
+        </ul>
+        <p class="note">Holy Grail is the rarest pull and only comes from the $100,000 LIMITED pack. A qualifying pull shows a celebration and a reward marked PENDING. That reward is a placeholder. The game does not pay real money.</p>
+      </section>
+
+      <section class="beasts">
+        <p class="kicker">Original beasts</p>
+        <h2>The set starts with twelve named creatures.</h2>
+        <div class="beast-row">
+          <figure><img src="../assets/emberfox.png" alt="Emberfox" /><figcaption>Emberfox</figcaption></figure>
+          <figure><img src="../assets/tidalfin.png" alt="Tidalfin" /><figcaption>Tidalfin</figcaption></figure>
+          <figure><img src="../assets/voltspire.png" alt="Voltspire" /><figcaption>Voltspire</figcaption></figure>
+          <figure><img src="../assets/mossback.png" alt="Mossback" /><figcaption>Mossback</figcaption></figure>
+          <figure><img src="../assets/nightwisp.png" alt="Nightwisp" /><figcaption>Nightwisp</figcaption></figure>
+          <figure><img src="../assets/aetherwing.png" alt="Aetherwing" /><figcaption>Aetherwing</figcaption></figure>
+        </div>
+      </section>
+
+      <section id="collection" class="panel">
+        <p class="kicker">Around the rip</p>
+        <h2>A collection, not just a pack opener.</h2>
+        <div class="feature-grid">
+          <article><b>Collection book</b><span>Every card in the set. Owned cards show their art. Missing cards stay silhouettes.</span></article>
+          <article><b>Favorites</b><span>Star a card from the book or the reveal and find it again later.</span></article>
+          <article><b>Pull history</b><span>The last 100 real rips, plus a list of your biggest pulls.</span></article>
+          <article><b>Daily pack</b><span>One free pack every 24 hours, with a seven-day streak and a Day 7 bonus.</span></article>
+          <article><b>Showcase</b><span>Pin a favorite, your rarest card, your highest value, your biggest pull, and a Holy Grail.</span></article>
+          <article><b>Simulation</b><span>Open packs for the animation only. Simulated rips do not touch your bank or collection.</span></article>
+        </div>
+      </section>
+
+      <section id="faq" class="panel faq">
+        <p class="kicker">FAQ</p>
+        <h2>Before you rip.</h2>
+        <details open>
+          <summary>Is this real money?</summary>
+          <p>No. The bank, pack prices, and card values are play money inside the game. Nothing is charged and nothing is paid out.</p>
+        </details>
+        <details>
+          <summary>What happens if I refresh?</summary>
+          <p>Your bank goes back to $100. Cards you kept, pull history, and the limited-pack supply stay on this device.</p>
+        </details>
+        <details>
+          <summary>What is the $100,000 pack?</summary>
+          <p>An extremely limited pack with its own look and exclusive cards. Only 10 exist. When they are gone, it says SOLD OUT.</p>
+        </details>
+        <details>
+          <summary>Where do I play?</summary>
+          <p>Open the game from this site. It runs in the browser on your computer. Your collection is saved in this browser.</p>
+        </details>
+      </section>
+    </main>
+
+    <footer>
+      <div>
+        <strong>VAULT.</strong>
+        <p>A fake-money card ripping game. Play money only.</p>
+      </div>
+      <a class="play" href="../index.html">Play</a>
+    </footer>
+    <div class="intro" id="intro" hidden>
+      <div class="intro-glow"></div>
+      <div class="intro-pack" id="introPack">
+        <span>V</span>
+        <strong>RIP</strong>
+      </div>
+      <div class="intro-flash"></div>
+    </div>
+    <script src="site.js"></script>
+  </body>
+</html>

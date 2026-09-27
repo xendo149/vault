@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, user-scalable=no" />
+    <meta name="theme-color" content="#07060c" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>VAULT.</title>
+    <link rel="stylesheet" href="css/style.css?v=4" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Outfit:wght@400;500;700;800&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="app">
+      <header class="topbar">
+        <div class="side-btns">
+          <button class="icon-btn" id="binderBtn" type="button">Cards</button>
+          <button class="icon-btn" id="menuBtn" type="button">Menu</button>
+        </div>
+        <div class="brand">
+          <span class="brand-mark">V</span>
+          <div>
+            <h1>VAULT.</h1>
+            <p>Hit $1,000,000,000</p>
+          </div>
+        </div>
+        <div class="wallet-wrap">
+          <button class="icon-btn" id="settingsBtn" type="button">Settings</button>
+          <div class="wallet">
+            <span class="wallet-label">Bank</span>
+            <span class="wallet-amount" id="balance">$100</span>
+          </div>
+        </div>
+      </header>
+
+      <div class="goal">
+        <div class="goal-row">
+          <span>Goal</span>
+          <span id="goalText">$0 / $1,000,000,000</span>
+        </div>
+        <div class="goal-track"><i id="goalBar"></i></div>
+      </div>
+
+      <main id="browse">
+        <div class="carousel">
+          <button class="nav-arrow" id="prevBtn" type="button" aria-label="Previous pack">‹</button>
+          <div class="viewport" id="viewport">
+            <div class="track" id="track"></div>
+          </div>
+          <button class="nav-arrow" id="nextBtn" type="button" aria-label="Next pack">›</button>
+        </div>
+        <div class="dots" id="dots"></div>
+        <section class="pack-info" id="packInfo"></section>
+      </main>
+    </div>
+
+    <div id="open-overlay" class="overlay" hidden>
+      <canvas id="fx"></canvas>
+      <div id="flash"></div>
+      <div id="open-stage"></div>
+    </div>
+
+    <div id="odds-overlay" class="overlay sheet" hidden></div>
+    <div id="binder-overlay" class="overlay sheet" hidden></div>
+    <div id="hub-overlay" class="overlay sheet" hidden></div>
+    <div id="settings-overlay" class="overlay sheet" hidden></div>
+    <div id="confirm-pop" class="overlay modal" hidden></div>
+    <div id="modal" class="overlay modal" hidden></div>
+    <div id="toast" class="toast" hidden></div>
+
+    <script src="js/data.js?v=3"></script>
+    <script src="js/catalog.js?v=6"></script>
+    <script src="js/audio.js?v=5"></script>
+    <script src="js/fx.js?v=3"></script>
+    <script src="js/app.js?v=6"></script>
+    <script src="js/menus.js?v=3"></script>
+    <script src="js/features.js?v=3"></script>
+  </body>
+</html>
