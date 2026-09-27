@@ -90,11 +90,11 @@ const MID = ["prime", "heat", "vault", "roller"];
 const HIGH = ["case", "gold", "hunt", "break", "god"];
 
 function packsFor(rarity, index) {
-  if (rarity === "holy") return ["limited"];
-  if (rarity === "grail") return index % 2 === 0 ? ["limited"] : ["god", "break"];
-  if (rarity === "secret") return index % 3 === 0 ? ["limited"] : ["god", "hunt", "break"];
-  if (rarity === "ultra" || rarity === "legendary") return [HIGH[index % HIGH.length], "limited"];
-  if (rarity === "epic" || rarity === "rare") return [MID[index % MID.length], HIGH[index % HIGH.length]];
+  if (rarity === "holy") return ["limited", "seraph", "eclipse", "shadow"];
+  if (rarity === "grail") return index % 2 === 0 ? ["limited", "seraph", "eclipse"] : ["god", "break", "seraph"];
+  if (rarity === "secret") return index % 3 === 0 ? ["limited", "eclipse", "shadow"] : ["god", "hunt", "break", "seraph"];
+  if (rarity === "ultra" || rarity === "legendary") return [HIGH[index % HIGH.length], "limited", "shadow", "eclipse"];
+  if (rarity === "epic" || rarity === "rare") return [MID[index % MID.length], HIGH[index % HIGH.length], "shadow"];
   return [LOW[index % LOW.length], MID[index % MID.length]];
 }
 

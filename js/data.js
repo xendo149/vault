@@ -53,6 +53,9 @@ const HOUSE = {
   mid: { common: 50, uncommon: 22, rare: 13, epic: 7, legendary: 4, ultra: 2, secret: 1.2, grail: 0.8, holy: 0 },
   high: { common: 46, uncommon: 22, rare: 14, epic: 8, legendary: 5, ultra: 2.5, secret: 1.5, grail: 1, holy: 0 },
   limited: { common: 18.75, uncommon: 20, rare: 18, epic: 15, legendary: 12, ultra: 8, secret: 5, grail: 3, holy: 0.25 },
+  shadow: { common: 8, uncommon: 12, rare: 16, epic: 18, legendary: 18, ultra: 14, secret: 8, grail: 5, holy: 1 },
+  eclipse: { common: 4, uncommon: 8, rare: 12, epic: 16, legendary: 18, ultra: 18, secret: 12, grail: 8, holy: 4 },
+  seraph: { common: 0, uncommon: 4, rare: 8, epic: 12, legendary: 16, ultra: 20, secret: 18, grail: 14, holy: 8 },
 };
 
 const PACKS = [
@@ -81,9 +84,9 @@ const PACKS = [
     limited: true,
     exclusive: true,
   },
-  { id: "shadow", name: "Shadow Vault", tag: "SECRET", price: 25, min: 2.5, max: 500, odds: HOUSE.mid, skin: "t6", accent: "#6d5cff", secret: true, need: "Collect 50 unique cards." },
-  { id: "eclipse", name: "Eclipse Tin", tag: "SECRET", price: 100, min: 10, max: 2000, odds: HOUSE.high, skin: "t8", accent: "#8eb6ff", secret: true, need: "Open 100 packs." },
-  { id: "seraph", name: "Seraph Case", tag: "SECRET", price: 500, min: 50, max: 10000, odds: HOUSE.high, skin: "t10", accent: "#ffd36a", secret: true, need: "Pull a Grail or Holy Grail." },
+  { id: "shadow", name: "Shadow Vault", tag: "SECRET", price: 150000, min: 5000, max: 2500000, odds: HOUSE.shadow, skin: "t6", accent: "#b9a6ff", secret: true, need: "Collect 50 unique cards." },
+  { id: "eclipse", name: "Eclipse Tin", tag: "SECRET", price: 400000, min: 25000, max: 8000000, odds: HOUSE.eclipse, skin: "t8", accent: "#9fd6ff", secret: true, need: "Open 100 packs." },
+  { id: "seraph", name: "Seraph Case", tag: "SECRET", price: 1000000, min: 100000, max: 25000000, odds: HOUSE.seraph, skin: "t10", accent: "#ffe7a3", secret: true, need: "Pull a Grail or Holy Grail." },
 ];
 
 function rarityValue(pack, rarityId) {

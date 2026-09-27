@@ -655,7 +655,29 @@ button { font: inherit; color: inherit; cursor: pointer; }
 #open-overlay.jackpot-open { background: #000; }
 #open-overlay.sim-open { box-shadow: inset 0 0 0 3px #ff4d6d; }
 .secret-reveal { text-align: center; }
-.secret-wax { box-shadow: 0 0 24px #6d5cff; }
+.secret-wax {
+  box-shadow: 0 0 0 2px #fff, 0 0 28px #d7c6ff, 0 0 64px #7a5cff88;
+  animation: limitedGlow 1.8s ease-in-out infinite;
+}
+.secret-wax::after {
+  content: "";
+  position: absolute; inset: -24%;
+  background: conic-gradient(from 40deg, transparent, #fff8, #b9a6ff88, transparent 28%, #9fd6ff66, transparent 62%, #ffe7a3aa, transparent 80%);
+  animation: spinfoil 4.5s linear infinite;
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+.secret-shadow { --wash: #3a2a78; }
+.secret-eclipse { --wash: #12324f; }
+.secret-seraph { --wash: #5a4314; }
+#browse.secret-view {
+  background:
+    radial-gradient(circle at 50% 0%, #ffffff22, transparent 34%),
+    radial-gradient(circle at 20% 90%, #7a5cff44, transparent 42%),
+    radial-gradient(circle at 80% 80%, #ffe7a333, transparent 40%);
+}
+#open-overlay.secret-open { background: radial-gradient(circle at 50% 40%, #2a2048, #05040a 68%); }
+.secret-seal { box-shadow: 0 0 0 2px #fff, 0 0 36px #d7c6ff, 0 0 72px #7a5cff; animation: limitedGlow 1.2s ease-in-out infinite; }
 body[data-pack-skin="gold"] .wax:not(.limited-wax) { --wash: #e6b325; }
 body[data-pack-skin="galaxy"] .wax:not(.limited-wax) { --wash: #3a2d88; }
 body[data-pack-skin="fire"] .wax:not(.limited-wax) { --wash: #d4451c; }

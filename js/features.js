@@ -330,7 +330,10 @@ function openHub(page) {
   };
   (pages[page] || renderMenu)(el);
   el.onclick = (event) => {
-    if (event.target === el) el.hidden = true;
+    if (event.target === el) {
+      stopBoardWatch();
+      el.hidden = true;
+    }
   };
 }
 
@@ -340,6 +343,7 @@ function hubCard(title, body) {
 
 function bindClose() {
   document.getElementById("closeHub").onclick = () => {
+    stopBoardWatch();
     document.getElementById("hub-overlay").hidden = true;
   };
 }
@@ -512,8 +516,31 @@ function renderProfile(el) {
 
 const BOARD_URL = "https://getpantry.cloud/apiv1/pantry/9c581252-070a-4747-a391-b0832089e32b/basket/board";
 let globalRows = [];
-let boardNote = "Global board. Usernames only.";
+let boardNote = "Your name, plus guests who join.";
 let boardChain = Promise.resolve();
+let boardTimer = null;
+
+function stopBoardWatch() {
+  clearInterval(boardTimer);
+  boardTimer = null;
+}
+
+function rowsFrom(players) {
+  return Object.entries(players || {})
+    .map(([key, row]) => {
+      const clean = cleanRow(row);
+      return clean ? { ...clean, id: key } : null;
+    })
+    .filter(Boolean);
+}
+
+async function refreshBoard() {
+  const got = await fetch(`${BOARD_URL}?t=${Date.now()}`, { cache: "no-store" });
+  if (!got.ok) throw new Error(String(got.status));
+  const data = await got.json();
+  globalRows = rowsFrom(data && data.players);
+  boardNote = "Your name, plus guests who join.";
+}
 
 async function syncOnce() {
   const id = playerKey();
@@ -524,14 +551,8 @@ async function syncOnce() {
   });
   if (!put.ok) throw new Error(String(put.status));
   const data = await put.json();
-  const players = data && data.players && typeof data.players === "object" ? data.players : {};
-  globalRows = Object.entries(players)
-    .map(([key, row]) => {
-      const clean = cleanRow(row);
-      return clean ? { ...clean, id: key } : null;
-    })
-    .filter(Boolean);
-  boardNote = "Global board. Usernames only.";
+  globalRows = rowsFrom(data && data.players);
+  boardNote = "Your name, plus guests who join.";
 }
 
 function syncGlobalBoard() {
@@ -546,10 +567,14 @@ function syncGlobalBoard() {
 
 function playerKey() {
   const key = "vault-player-id";
-  let id = localStorage.getItem(key);
+  let id = localStorage.getItem(key) || meta.playerId;
   if (!id) {
     id = (window.crypto && crypto.randomUUID && crypto.randomUUID()) || `${Date.now()}-${Math.random().toString(16).slice(2)}`;
-    localStorage.setItem(key, id);
+  }
+  localStorage.setItem(key, id);
+  if (meta.playerId !== id) {
+    meta.playerId = id;
+    saveMeta();
   }
   return id;
 }
@@ -595,13 +620,17 @@ function cleanRow(row) {
 }
 
 function boardRows() {
-  const mine = myBoardRow();
-  const id = playerKey();
-  const map = new Map();
-  for (const row of globalRows) map.set(row.id || row.name, row);
-  map.set(id, { ...mine, id });
+  const mine = { ...myBoardRow(), id: playerKey() };
+  const guests = globalRows
+    .filter((row) => row.id && row.id !== mine.id)
+    .sort((a, b) => (a.at || 0) - (b.at || 0))
+    .map((row, index, list) => ({
+      ...row,
+      name: list.length > 1 ? `Guest ${index + 1}` : "Guest",
+    }));
+  const rows = [mine, ...guests];
   const keys = { value: "value", cards: "cards", unique: "unique", rarest: "rareRank", big: "big", opened: "opened", streak: "streak" };
-  return [...map.values()].sort((a, b) => (b[keys[boardKey]] || 0) - (a[keys[boardKey]] || 0));
+  return rows.sort((a, b) => (b[keys[boardKey]] || 0) - (a[keys[boardKey]] || 0));
 }
 
 function paintBoard(el) {
@@ -617,9 +646,23 @@ function paintBoard(el) {
 
 function renderBoard(el) {
   paintBoard(el);
+  stopBoardWatch();
   syncGlobalBoard().then(() => {
     if (!el.hidden) paintBoard(el);
   });
+  boardTimer = setInterval(() => {
+    if (el.hidden) {
+      stopBoardWatch();
+      return;
+    }
+    refreshBoard()
+      .then(() => {
+        if (!el.hidden) paintBoard(el);
+      })
+      .catch(() => {
+        boardNote = "Couldn't reach the global board.";
+      });
+  }, 4000);
 }
 
 function renderAchievements(el) {

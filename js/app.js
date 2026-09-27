@@ -243,7 +243,7 @@ function waxHTML(pack, locked) {
     /* ignore */
   }
   return `
-    <div class="wax ${pack.skin} ${skin} ${pack.limited ? "limited-wax" : ""} ${pack.secret ? "secret-wax" : ""}">
+    <div class="wax ${pack.skin} ${skin} ${pack.limited ? "limited-wax" : ""} ${pack.secret ? `secret-wax secret-${pack.id}` : ""}">
       <div class="wax-crest">${pack.limited ? "100K" : pack.secret ? "?" : pack.price < 10 ? pack.price : pack.tag.slice(0, 1)}</div>
       <div class="wax-tag">${pack.tag}</div>
       ${pack.limited ? `<div class="limited-ribbon">${left > 0 ? `${left} / ${LIMITED_TOTAL}` : "SOLD OUT"}</div>` : ""}
@@ -294,6 +294,7 @@ function setIndex(next, animate = true) {
   document.getElementById("nextBtn").disabled = packIndex === packs.length - 1;
   document.querySelectorAll(".dots i").forEach((dot, i) => dot.classList.toggle("on", i === packIndex));
   document.getElementById("browse").classList.toggle("limited-view", !!packs[packIndex]?.limited);
+  document.getElementById("browse").classList.toggle("secret-view", !!packs[packIndex]?.secret);
   renderInfo();
   save();
 }
@@ -318,10 +319,10 @@ function renderInfo() {
     <h2>${pack.name}</h2>
     <p class="pack-price">${money(pack.price)}</p>
     ${pack.limited ? `<p class="limited-kicker">LIMITED SUPPLY</p><p class="limited-copy">${soldOut ? "SOLD OUT" : `REMAINING: ${left} / ${LIMITED_TOTAL}`}</p><p class="limited-copy sub">Exclusive cards only · Holy Grail is the rarest pull in the game</p>` : ""}
-    ${pack.secret ? `<p class="limited-kicker">SECRET PACK</p>` : ""}
+    ${pack.secret ? `<p class="limited-kicker">SECRET PACK</p><p class="limited-copy sub">Above the $100,000 pack. Higher odds and a higher ceiling.</p>` : ""}
     <p class="range">${money(pack.min)} – ${money(pack.max)}</p>
     <p class="meta">Avg ${money(avg)} · 1 card · ${SET_SIZE} in the collection${owned ? ` · ${owned} owned` : ""}</p>
-    <p class="meta">${pack.limited ? "Exclusive cards that do not appear in other packs." : "Common through Holy Grail. Higher rarity, higher virtual value."}</p>
+    <p class="meta">${pack.limited ? "Exclusive cards that do not appear in other packs." : pack.secret ? "Earned packs. Every pull stays inside this range, and Holy Grail is easier than in the $100,000 pack." : "Common through Holy Grail. Higher rarity, higher virtual value."}</p>
     <div class="actions">
       <button class="ghost" id="oddsBtn" type="button">View Odds</button>
       <button class="rip" id="ripBtn" type="button" ${locked && !simMode ? "disabled" : ""}>${soldOut && !simMode ? "SOLD OUT" : simMode ? "SIM RIP" : locked ? "NEED MORE BANK" : owned ? "RIP OWNED" : "RIP"}</button>
@@ -484,13 +485,14 @@ function startOpening(pack, card) {
   overlay.hidden = false;
   overlay.classList.remove("zoom-hit", "gone-dark", "jackpot-open");
   overlay.classList.toggle("limited-open", !!pack.limited);
+  overlay.classList.toggle("secret-open", !!pack.secret);
   overlay.classList.toggle("sim-open", simMode);
   overlay.classList.add("entering");
   const stage = document.getElementById("open-stage");
   stage.innerHTML = `
     ${simMode ? `<p class="sim-banner">SIMULATION MODE · NO REAL REWARDS</p>` : ""}
     <div class="dust">${Array.from({ length: 14 }, () => "<i></i>").join("")}</div>
-    <div class="sealed ${pack.limited ? "limited-seal" : ""}" id="sealed" role="button" aria-label="Tear the pack" style="--accent:${pack.accent};--tear:0">
+    <div class="sealed ${pack.limited ? "limited-seal" : ""} ${pack.secret ? "secret-seal" : ""}" id="sealed" role="button" aria-label="Tear the pack" style="--accent:${pack.accent};--tear:0">
       <div class="inner-light"></div>
       <canvas id="tearCanvas" aria-label="Tear the pack"></canvas>
       <div class="sealed-label">${pack.tag}</div>
@@ -767,7 +769,7 @@ function unveil(wrap, card, rank) {
 function finishOpening() {
   const overlay = document.getElementById("open-overlay");
   overlay.hidden = true;
-  overlay.classList.remove("entering", "zoom-hit", "gone-dark", "limited-open", "jackpot-open", "sim-open");
+  overlay.classList.remove("entering", "zoom-hit", "gone-dark", "limited-open", "secret-open", "jackpot-open", "sim-open");
   document.querySelectorAll(".scrap").forEach((el) => el.remove());
   tearSession = null;
   Sfx.tap();
