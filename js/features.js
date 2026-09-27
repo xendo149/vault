@@ -217,6 +217,7 @@ function onRealPull(pack, card) {
   checkSecrets();
   checkAchievements();
   saveMeta();
+  syncGlobalBoard();
 }
 
 function pullTier(card) {
@@ -504,52 +505,121 @@ function renderProfile(el) {
   el.querySelector("#saveName").onclick = () => {
     meta.name = el.querySelector("#playerName").value.trim().slice(0, 18) || "Gavin";
     saveMeta();
+    syncGlobalBoard();
     toast("Name saved");
   };
 }
 
-function boardRows() {
+const BOARD_URL = "https://getpantry.cloud/apiv1/pantry/9c581252-070a-4747-a391-b0832089e32b/basket/board";
+let globalRows = [];
+let boardNote = "Global board. Usernames only.";
+let boardChain = Promise.resolve();
+
+async function syncOnce() {
+  const id = playerKey();
+  const put = await fetch(BOARD_URL, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ players: { [id]: myBoardRow() } }),
+  });
+  if (!put.ok) throw new Error(String(put.status));
+  const data = await put.json();
+  const players = data && data.players && typeof data.players === "object" ? data.players : {};
+  globalRows = Object.entries(players)
+    .map(([key, row]) => {
+      const clean = cleanRow(row);
+      return clean ? { ...clean, id: key } : null;
+    })
+    .filter(Boolean);
+  boardNote = "Global board. Usernames only.";
+}
+
+function syncGlobalBoard() {
+  if (simMode) return Promise.resolve();
+  boardChain = boardChain
+    .then(syncOnce)
+    .catch(() => {
+      boardNote = "Couldn't reach the global board.";
+    });
+  return boardChain;
+}
+
+function playerKey() {
+  const key = "vault-player-id";
+  let id = localStorage.getItem(key);
+  if (!id) {
+    id = (window.crypto && crypto.randomUUID && crypto.randomUUID()) || `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    localStorage.setItem(key, id);
+  }
+  return id;
+}
+
+function myBoardRow() {
   const mine = collectionStats();
-  const rare = binderList().sort((a, b) => rarityRank(b.rarity) - rarityRank(a.rarity))[0];
-  const rows = [{
-    name: meta.name || "Gavin",
-    value: mine.value,
-    cards: mine.qty,
-    unique: mine.unique,
+  const rare = binderList().slice().sort((a, b) => rarityRank(b.rarity) - rarityRank(a.rarity))[0];
+  const name = String(meta.name || "Gavin").replace(/[^\w .'-]/g, "").trim().slice(0, 18) || "Gavin";
+  return {
+    name,
+    value: Number(mine.value) || 0,
+    cards: Number(mine.qty) || 0,
+    unique: Number(mine.unique) || 0,
     rareRank: rare ? rarityRank(rare.rarity) : -1,
     rarest: rare ? rarityById(rare.rarity).label : "—",
     big: bestPull(),
-    opened: meta.opened,
-    streak: meta.bestDayStreak || 0,
-  }];
-  for (const profile of meta.profiles) {
-    const cards = Object.values(profile.binder || {});
-    const top = cards.slice().sort((a, b) => rarityRank(b.rarity) - rarityRank(a.rarity))[0];
-    rows.push({
-      name: profile.name,
-      value: cards.reduce((sum, card) => sum + card.value * card.qty, 0),
-      cards: cards.reduce((sum, card) => sum + card.qty, 0),
-      unique: new Set(cards.map((card) => card.id)).size,
-      rareRank: top ? rarityRank(top.rarity) : -1,
-      rarest: top ? rarityById(top.rarity).label : "—",
-      big: profile.best || 0,
-      opened: profile.opened || 0,
-      streak: profile.streak || 0,
-    });
-  }
-  const keys = { value: "value", cards: "cards", unique: "unique", rarest: "rareRank", big: "big", opened: "opened", streak: "streak" };
-  return rows.sort((a, b) => b[keys[boardKey]] - a[keys[boardKey]]);
+    opened: Number(meta.opened) || 0,
+    streak: Number(meta.bestDayStreak) || 0,
+    at: Date.now(),
+  };
 }
 
-function renderBoard(el) {
+function cleanRow(row) {
+  if (!row || typeof row !== "object") return null;
+  const name = String(row.name || "").replace(/[^\w .'-]/g, "").trim().slice(0, 18);
+  if (!name) return null;
+  const num = (value) => {
+    const n = Number(value);
+    return Number.isFinite(n) && n >= 0 && n < 1e15 ? n : 0;
+  };
+  return {
+    name,
+    value: num(row.value),
+    cards: num(row.cards),
+    unique: num(row.unique),
+    rareRank: Number.isFinite(Number(row.rareRank)) ? Number(row.rareRank) : -1,
+    rarest: String(row.rarest || "—").slice(0, 24),
+    big: num(row.big),
+    opened: num(row.opened),
+    streak: num(row.streak),
+    at: num(row.at),
+  };
+}
+
+function boardRows() {
+  const mine = myBoardRow();
+  const id = playerKey();
+  const map = new Map();
+  for (const row of globalRows) map.set(row.id || row.name, row);
+  map.set(id, { ...mine, id });
+  const keys = { value: "value", cards: "cards", unique: "unique", rarest: "rareRank", big: "big", opened: "opened", streak: "streak" };
+  return [...map.values()].sort((a, b) => (b[keys[boardKey]] || 0) - (a[keys[boardKey]] || 0));
+}
+
+function paintBoard(el) {
   const labels = { value: "Highest collection value", cards: "Most cards", unique: "Most unique", rarest: "Rarest card pulled", big: "Biggest single pull", opened: "Most packs opened", streak: "Longest opening streak" };
   el.innerHTML = hubCard("Leaderboard", `
     <div class="quick">${Object.entries(labels).map(([id, label]) => `<button type="button" data-board="${id}" class="${boardKey === id ? "primary" : ""}">${label}</button>`).join("")}</div>
     ${boardRows().map((row, index) => `<div class="history-row"><b>#${index + 1} ${esc(row.name)}</b><span>${boardKey === "rarest" ? esc(row.rarest) : boardKey === "value" || boardKey === "big" ? money(row[boardKey]) : row[boardKey]}</span></div>`).join("")}
-    <p class="meta">Usernames on this device only. No personal details.</p>
+    <p class="meta">${esc(boardNote)}</p>
   `);
   bindClose();
-  el.querySelectorAll("[data-board]").forEach((btn) => { btn.onclick = () => { boardKey = btn.dataset.board; renderBoard(el); }; });
+  el.querySelectorAll("[data-board]").forEach((btn) => { btn.onclick = () => { boardKey = btn.dataset.board; paintBoard(el); }; });
+}
+
+function renderBoard(el) {
+  paintBoard(el);
+  syncGlobalBoard().then(() => {
+    if (!el.hidden) paintBoard(el);
+  });
 }
 
 function renderAchievements(el) {
@@ -828,6 +898,7 @@ document.getElementById("menuBtn").onclick = () => {
 };
 
 saveMeta();
+syncGlobalBoard();
 setInterval(() => {
   const line = document.querySelector(".daily-line");
   if (line) line.textContent = dailyReady() ? "DAILY FREE PACK · ready to claim" : `Next free pack: ${dailyLeft()}`;
